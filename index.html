@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jonatan Villen Martínez — Arquitecto de QA, Gobierno de Calidad, Shift-Left & Calidad con IA</title>
+  <title>Jonatan Villen Martínez — QA Architect, Quality Governance, Shift-Left & AI Quality</title>
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -183,13 +183,13 @@
 
       <!-- Clean Section Links -->
       <nav class="hidden lg:flex items-center gap-3.5 xl:gap-4 text-xs font-medium text-apple-muted dark:text-zinc-400 whitespace-nowrap">
-        <a href="#perfil" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.profile">Perfil</a>
-        <a href="#calidad-core" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.coreQa">Gobierno & Shift-Left</a>
-        <a href="#arquitectura-ia" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.architecture">Plataforma IA</a>
-        <a href="#competencias" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.skills">Competencias</a>
-        <a href="#experiencia" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.experience">Experiencia</a>
-        <a href="#formacion" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.education">Formación</a>
-        <a href="#simulador" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors text-apple-blue dark:text-apple-darkBlue font-semibold" data-i18n="nav.simulator">Simulador</a>
+        <a href="#perfil" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.profile">Profile</a>
+        <a href="#calidad-core" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.coreQa">Governance & Shift-Left</a>
+        <a href="#arquitectura-ia" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.architecture">AI Quality</a>
+        <a href="#competencias" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.skills">Skills</a>
+        <a href="#experiencia" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.experience">Experience</a>
+        <a href="#formacion" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors" data-i18n="nav.education">Education</a>
+        <a href="#simulador" class="shrink-0 whitespace-nowrap hover:text-apple-ink dark:hover:text-white transition-colors text-apple-blue dark:text-apple-darkBlue font-semibold" data-i18n="nav.simulator">Simulator</a>
       </nav>
 
       <!-- Minimal Pill Controls -->
@@ -213,8 +213,8 @@
         </button>
 
         <!-- Language Switcher -->
-        <button type="button" onclick="toggleLanguage()" class="shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-full border border-black/10 dark:border-white/10 hover:bg-apple-subtle dark:hover:bg-apple-darkSubtle text-xs font-mono text-apple-ink dark:text-zinc-200 transition-colors cursor-pointer" title="ES / EN">
-          <span id="lang-label">ES</span>
+        <button type="button" onclick="toggleLanguage()" class="shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-full border border-black/10 dark:border-white/10 hover:bg-apple-subtle dark:hover:bg-apple-darkSubtle text-xs font-mono text-apple-ink dark:text-zinc-200 transition-colors cursor-pointer" title="Switch Language (EN / ES)">
+          <span id="lang-label"><strong class="text-apple-blue dark:text-apple-darkBlue">EN</strong><span class="opacity-40"> / </span><span class="opacity-60">ES</span></span>
         </button>
 
         <!-- Theme Switcher -->
@@ -4121,38 +4121,51 @@
     // UI ACTIONS (LANGUAGE, THEME, QR MODAL, PITCH)
     // =========================================================================
     function applyTranslations() {
-      var dict = CV_CONFIG.i18n[currentLang] || CV_CONFIG.i18n.es;
+      var dict = CV_CONFIG.i18n[currentLang] || CV_CONFIG.i18n.en;
+      document.documentElement.lang = currentLang;
+
+      document.title = currentLang === 'es'
+        ? 'Jonatan Villen Martínez — Arquitecto de QA, Gobierno de Calidad, Shift-Left & Calidad con IA'
+        : 'Jonatan Villen Martínez — QA Architect, Quality Governance, Shift-Left & AI Quality';
+
       var nodes = document.querySelectorAll('[data-i18n]');
       nodes.forEach(function (el) {
         var key = el.getAttribute('data-i18n');
-        var overrideKey = 'i18n:' + currentLang + ':' + key;
-        if (Object.prototype.hasOwnProperty.call(CV_OVERRIDES, overrideKey)) {
-          el.textContent = CV_OVERRIDES[overrideKey];
-        } else if (Object.prototype.hasOwnProperty.call(dict, key)) {
-          el.textContent = dict[key];
+        if (dict[key]) {
+          var overrideKey = 'i18n:' + currentLang + ':' + key;
+          el.textContent = getTextWithOverride(overrideKey, dict[key]);
         }
       });
 
-      var nameEl = document.querySelector('[data-edit-key="custom:name"]');
-      if (nameEl) {
-        nameEl.textContent = getTextWithOverride('custom:name', 'Jonatan Villen Martínez');
+      var langLabel = document.getElementById('lang-label');
+      if (langLabel) {
+        if (currentLang === 'en') {
+          langLabel.innerHTML = '<strong class="text-apple-blue dark:text-apple-darkBlue">EN</strong><span class="opacity-40"> / </span><span class="opacity-60">ES</span>';
+        } else {
+          langLabel.innerHTML = '<span class="opacity-60">EN</span><span class="opacity-40"> / </span><strong class="text-apple-blue dark:text-apple-darkBlue">ES</strong>';
+        }
       }
 
       var searchInput = document.getElementById('skill-search');
       if (searchInput) {
-        searchInput.placeholder = currentLang === 'es' ? 'Buscar (k6, MCP, Kafka...)' : 'Search (k6, MCP, Kafka...)';
+        searchInput.placeholder = currentLang === 'es'
+          ? 'Buscar (k6, MCP, Kafka...)'
+          : 'Search (k6, MCP, Kafka...)';
       }
-      syncEditableAttributes();
     }
 
     window.toggleLanguage = function () {
-      currentLang = currentLang === 'es' ? 'en' : 'es';
+      currentLang = currentLang === 'en' ? 'es' : 'en';
       safeStorageSet('jv_cv_lang', currentLang);
-      document.documentElement.lang = currentLang;
-      var lbl = document.getElementById('lang-label');
-      if (lbl) lbl.textContent = currentLang.toUpperCase();
       applyTranslations();
-      renderAll();
+      renderCoreQa();
+      renderPipeline();
+      renderSkills();
+      renderExperience();
+      renderEducation();
+      if (!simState.running) {
+        simReset(true);
+      }
     };
 
     window.applyThemeMode = function (mode) {
